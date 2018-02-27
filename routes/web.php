@@ -18,8 +18,8 @@ $this->group(['middleware' => ['auth'], 'namespace' => 'Admin', 'prefix' => 'adm
 	$this->get('deposit', 'BalanceController@deposit')->name('balance.deposit'); //Deposito 
 	$this->post('deposit', 'BalanceController@depositStore')->name('deposit.store'); // StoreDeposito
 	
-	$this->get('withdrawn', 'BalanceController@withdrawn')->name('balance.withdrawn'); // Saque
-	$this->post('withdrawn', 'BalanceController@withdrawnStore')->name('withdrawn.store'); // Saque
+	$this->get('withdraw', 'BalanceController@withdraw')->name('balance.withdraw'); // Saque
+	$this->post('withdraw', 'BalanceController@withdrawStore')->name('withdraw.store'); // Saque
 
 	
 

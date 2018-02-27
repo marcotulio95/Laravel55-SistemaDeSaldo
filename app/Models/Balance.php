@@ -35,4 +35,35 @@ class Balance extends Model
 
     	}
     }
+
+    public function withdraw($value)
+    {
+        if ($this->amoount < $value)
+        {
+            return ['success' => false,'message' => "Saldo Insuficiente para saque, Seu saldo Atual é de apenas: $this->amoount"];
+        }
+
+        DB::beginTransaction();
+
+        $total_before = $this->amoount ? $this->amoount : 0;
+        $this->amoount -= number_format($value, 2, '.', '');
+        $withdraw = $this->save();
+
+        $historic = auth()->user()->historics()->create([
+            'type'         => 'O',
+            'amount'      => $value,
+            'total_before' => $total_before,
+            'total_after'  => $this->amoount,
+            'date'         => date('Ymd'),
+        ]);
+        if ($withdraw && $historic){
+            DB::commit();
+            return ['success' => true,'message' => "Sucesso ao retirar"];
+        }else{
+
+            DB::rollback();
+            return ['success' => false,'message' => "Falha ao retirar"];
+
+        }
+    }
 }

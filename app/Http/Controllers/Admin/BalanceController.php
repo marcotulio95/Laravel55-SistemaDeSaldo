@@ -32,16 +32,16 @@ class BalanceController extends Controller
      return redirect()->back()->with('error', $response['message']);
     }
 
-    public function withdrawn(){
-        return view ('admin.balance.withdrawn');
+    public function withdraw(){
+        return view ('admin.balance.withdraw');
     }
 
-    public function withdrawnStore(MoneyValidationFormRequest $request){
+    public function withdrawStore(MoneyValidationFormRequest $request){
         
-        dd($request->all());
+        //dd($request->all());
 
         $balance  =  auth()->user()->balance()->firstOrCreate([]);
-        $response = $balance->deposit($request->value);
+        $response = $balance->withdraw($request->value);
 
         if($response['success']){
             return redirect()->route('admin.balance')->with('success', $response['message']);    
