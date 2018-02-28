@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Balance;
 use App\Http\Requests\MoneyValidationFormRequest;
+use App\User;
+
 
 class BalanceController extends Controller
 {
@@ -53,7 +55,45 @@ class BalanceController extends Controller
         return view('admin.balance.transfer');
     }
 
-    public function confirmTransfer(Request $request){
-        dd($request->all());
+    public function confirmTransfer(Request $request, User $user)
+    {
+        $sender = $user->getSender($request->sender);
+
+        if (!$sender){
+            return redirect()->back()->with('error', "Usuário $request->sender não foi encontrado !");
+        }
+
+        if ($sender->id === auth()->user()->id ){
+            return redirect()->back()->with('error', "Voce não pode transferir saldo para você mesmo");
+        }
+
+        $balance = auth()->user()->balance;
+
+        return view('admin.balance.transfer-confirm', compact('sender', 'balance'));
+
+    }
+
+    public function transferStore(MoneyValidationFormRequest $request, User $user)
+    {
+        $sender = $user->find($request->sender_id);
+        
+        if (!$sender){
+            return redirect('balance.transfer')->with('error', "Usuário $request->sender não foi encontrado !");
+        }
+
+        $balance  =  auth()->user()->balance()->firstOrCreate([]);
+        $response = $balance->transfer($request->value, $sender);
+
+        if($response['success']){
+            return redirect()->route('admin.balance')->with('success', $response['message']);    
+        }
+     return redirect()->route('admin.balance')->with('error', $response['message']);
+    }
+
+    public function historic()
+    {
+        $historics = auth()->user()->historics()->with(['userSender'])->get();
+
+        return view('admin.balance.historics', compact('historics'));
     }
 }

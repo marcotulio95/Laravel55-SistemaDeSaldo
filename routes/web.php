@@ -22,8 +22,10 @@ $this->group(['middleware' => ['auth'], 'namespace' => 'Admin', 'prefix' => 'adm
 	$this->post('withdraw', 'BalanceController@withdrawStore')->name('withdraw.store'); // StoreSaque
 
 	$this->get('transfer', 'BalanceController@transfer')->name('balance.transfer'); // Transferencia de Money
-	$this->post('confirm-transfer', 'BalanceController@confirmTransfer')->name('confirm.transfer'); // ConfirmTranferencia
+	$this->post('confirm-transfer', 'BalanceController@confirmTransfer')->name('confirm.transfer'); // Confirma Tranferencia 
+	$this->post('transfer', 'BalanceController@transferStore')->name('transfer.store'); // StoreTranfencia
 	
+	$this->get('historic', 'BalanceController@historic')->name('admin.historic'); // Histórico
 
 });
 
